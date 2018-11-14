@@ -1,0 +1,42 @@
+{
+  "client": {
+    "id": 1,
+    "clientId": "my_app",
+    "clientSecret": "my_secret",
+    "redirectUris": [
+      "http://implements.io"
+    ],
+    "refreshTokenLifetime": 0,
+    "accessTokenLifetime": 0,
+    "grants": [
+      "password"
+    ]
+  },
+  "user": {
+    "id": 1,
+    "username": "egg-oauth2-server",
+    "password": "azard"
+  },
+  "token": {
+    "accessToken": "413c24e8e8b2c37e26257be3b130cced4d98716b",
+    "accessTokenExpiresAt": "2018-11-14T10:56:58.886Z",
+    "refreshToken": "eac8a6f8c9641d5fb55bcd706bf48d20b110a2ae",
+    "refreshTokenExpiresAt": "2018-11-28T09:56:58.886Z",
+    "user": {
+      "userId": 1
+    },
+    "client": {
+      "id": 1,
+      "clientId": "my_app",
+      "clientSecret": "my_secret",
+      "redirectUris": [
+        "http://implements.io"
+      ],
+      "refreshTokenLifetime": 0,
+      "accessTokenLifetime": 0,
+      "grants": [
+        "password"
+      ]
+    }
+  }
+}

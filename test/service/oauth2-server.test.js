@@ -1,0 +1,87 @@
+'use strict';
+
+const { app } = require('egg-mock/bootstrap');
+const expect = require('chai').expect;
+
+describe('service/oauth2-server.test.js', () => {
+
+  after(() => app.close());
+
+  it('should GET /', () => {
+    return app.httpRequest()
+      .get('/')
+      .expect('hi, egg')
+      .expect(200);
+  });
+
+  it('GET /user/token', () => {
+    return app.httpRequest()
+      .get('/user/token')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.error).to.equal('invalid_request');
+      });
+  });
+
+  it('no header POST /user/token', () => {
+    return app.httpRequest()
+      .post('/user/token')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.error).to.equal('invalid_request');
+      });
+  });
+
+  it('incorrect Authorization POST /user/token', () => {
+    return app.httpRequest()
+      .post('/user/token')
+      .set({
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: 'Basic ZWdnL',
+      })
+      .send({
+        grant_type: 'password',
+        username: 'egg-oauth2-server',
+        password: 'azard',
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.error).to.equal('invalid_client');
+      });
+  });
+
+  it('correct POST /user/token', () => {
+    return app.httpRequest()
+      .post('/user/token')
+      .set({
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: 'Basic bXlfYXBwOm15X3NlY3JldA==', // Basic base64(my_app:my_secret)
+      })
+      .send({
+        username: 'egg-oauth2-server',
+        password: 'azard',
+        grant_type: 'password',
+      })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.token_type).to.equal('Bearer');
+        expect(body.access_token.length).to.equal(40);
+      });
+  });
+
+  it('incorrect GET /user/authenticate', () => {
+    return app.httpRequest()
+      .get('/user/authenticate')
+      .expect(401)
+      .expect('Unauthorized');
+  });
+
+  it('correct GET /user/authenticate', () => {
+    return app.httpRequest()
+      .get('/user/authenticate')
+      .set({
+        Authorization: 'Bearer 838734b4115734de1f87f02a9da9106ddec7cc30',
+      })
+      .expect(200);
+  });
+});
