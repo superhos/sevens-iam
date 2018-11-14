@@ -8,6 +8,7 @@ coverage/
 .idea/
 .history/
 run/
+db/
 .DS_Store
 *.sw*
 *.un~
