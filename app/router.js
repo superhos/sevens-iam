@@ -8,7 +8,11 @@ module.exports = app => {
   // router.get('/', controller.home.index);
   app.get('/', controller.home.index);
   // 申请token
-  app.all('/api/token', app.oAuth2Server.token());
-  // app.get('/user/authenticate', app.oAuth2Server.authenticate(), 'users.authenticate');
-  router.resources('clients', '/api/clients', app.oAuth2Server.authenticate(), controller.clients)
+  app.all('/oauth2/token', app.oAuth2Server.token());
+  // 授权
+  app.resources('/oauth2/authorize', controller.authorize);
+
+  // 验证
+  app.get('/oauth2/authenticate', app.oAuth2Server.authenticate(), 'authorize.authenticate');
+  router.resources('clients', '/oauth2/clients', app.oAuth2Server.authenticate(), controller.clients);
 };

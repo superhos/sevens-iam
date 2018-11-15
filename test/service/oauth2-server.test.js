@@ -14,35 +14,35 @@ describe('service/oauth2-server.test.js', () => {
       .expect(200);
   });
 
-  it('GET /user/token', () => {
+  it('GET /oauth2/token', () => {
     return app.httpRequest()
-      .get('/user/token')
+      .get('/oauth2/token')
       .expect(400)
       .then(({ body }) => {
         expect(body.error).to.equal('invalid_request');
       });
   });
 
-  it('no header POST /user/token', () => {
+  it('no header POST /oauth2/token', () => {
     return app.httpRequest()
-      .post('/user/token')
+      .post('/oauth2/token')
       .expect(400)
       .then(({ body }) => {
         expect(body.error).to.equal('invalid_request');
       });
   });
 
-  it('incorrect Authorization POST /user/token', () => {
+  it('incorrect Authorization POST /oauth2/token', () => {
     return app.httpRequest()
-      .post('/user/token')
+      .post('/oauth2/token')
       .set({
         'Content-Type': 'application/x-www-form-urlencoded',
         Authorization: 'Basic ZWdnL',
       })
       .send({
         grant_type: 'password',
-        username: 'egg-oauth2-server',
-        password: 'azard',
+        username: 'sevens',
+        password: '123456',
       })
       .expect(400)
       .then(({ body }) => {
@@ -50,17 +50,18 @@ describe('service/oauth2-server.test.js', () => {
       });
   });
 
-  it('correct POST /user/token', () => {
+  it('correct POST /oauth2/token', () => {
     return app.httpRequest()
-      .post('/user/token')
+      .post('/oauth2/token')
       .set({
         'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: 'Basic bXlfYXBwOm15X3NlY3JldA==', // Basic base64(my_app:my_secret)
+        Authorization: 'Basic c2V2ZW5zLXdlYjozSzBJMXVmVWtLaXZTYzZPQ3hCOGdHdWtLNFI3RmJuZkpZaU1rSVFG==',
+        // Basic base64(my_app:my_secret)
       })
       .send({
-        username: 'egg-oauth2-server',
-        password: 'azard',
         grant_type: 'password',
+        username: 'sevens',
+        password: '123456',
       })
       .expect(200)
       .then(({ body }) => {
@@ -69,18 +70,18 @@ describe('service/oauth2-server.test.js', () => {
       });
   });
 
-  it('incorrect GET /user/authenticate', () => {
+  it('incorrect GET /oauth2/authenticate', () => {
     return app.httpRequest()
-      .get('/user/authenticate')
+      .get('/oauth2/authenticate')
       .expect(401)
       .expect('Unauthorized');
   });
 
-  it('correct GET /user/authenticate', () => {
+  it('correct GET /oauth2/authenticate', () => {
     return app.httpRequest()
-      .get('/user/authenticate')
+      .get('/oauth2/authenticate')
       .set({
-        Authorization: 'Bearer 838734b4115734de1f87f02a9da9106ddec7cc30',
+        Authorization: 'Bearer 3a35e7e72f0d054f9fc324518d70ffc693b08ee7',
       })
       .expect(200);
   });

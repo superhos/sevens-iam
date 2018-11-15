@@ -3,6 +3,7 @@
 module.exports = appInfo => {
   const config = exports = {};
 
+  config.systemInfo = {}
   // use for cookie sign key, should change to your own and keep security
   config.keys = appInfo.name + '_1542168498168_6998';
 
@@ -26,6 +27,13 @@ module.exports = appInfo => {
   config.security = {
     csrf: {
       enable: false,
+    },
+    domainWhiteList:['.sevens.com'],  // 安全白名单，以 . 开头
+  };
+
+  config.view = {
+    mapping: {
+      '.ejs': 'ejs',
     },
   };
 

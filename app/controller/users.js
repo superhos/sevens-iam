@@ -12,11 +12,9 @@ module.exports = app => {
     }
 
     * read() {
-      this.ctx.body = { result: 'read' }
+      this.ctx.body = { result: 'read' };
     }
 
-    * create() {
-    }
   }
   return UserController;
 };
