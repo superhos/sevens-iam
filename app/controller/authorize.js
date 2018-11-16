@@ -6,22 +6,23 @@ module.exports = app => {
 
     async index() {
 
-      console.log(AuthServer)
-      if (!this.vaildParamsForAuthorize(this.ctx.query)){
-        this.ctx.body = {"error":"unsupported_grant_type","message":"The authorization grant type is not supported by the authorization server.","hint":"Check that all required parameters have been provided"}
-        return
-      }
+      // console.log(AuthServer)
+      // if (!this.vaildParamsForAuthorize(this.ctx.query)){
+      //   this.ctx.body = {"error":"unsupported_grant_type","message":"The authorization grant type is not supported by the authorization server.","hint":"Check that all required parameters have been provided"}
+      //   return
+      // }
 
-      const client = await this.ctx.service.client.findOne({clientId : this.ctx.query.client_id})
+      // const client = await this.ctx.service.client.findOne({clientId : this.ctx.query.client_id})
 
-      if (!(client.redirectUris.find(e => e === this.ctx.query.redirect_uri))){
-        this.ctx.body = {"error":"invalid_client","message":"Client authentication failed"}
-        return
-      }
+      // if (!(client.redirectUris.find(e => e === this.ctx.query.redirect_uri))){
+      //   this.ctx.body = {"error":"invalid_client","message":"Client authentication failed"}
+      //   return
+      // }
 
       await this.ctx.render('authorize.ejs', {
         data: {
-          'system_name': app.config.systemInfo.name || app.config.name
+          'system_name': app.config.systemInfo.name || app.config.name,
+          'system_subtitle': app.config.systemInfo.subtitle || ''
         }
       })
     }

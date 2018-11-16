@@ -13,14 +13,80 @@
       window.data = <%- JSON.stringify(data) %>
   </script>
   <% } %>
+  <style>
+  .content {
+    width: 580px;
+    margin: 0 auto;
+    height: 540px;
+    box-shadow: 1px 1px 7px 1px #ccc;
+    background: url(https://i557com-1251420446.picgz.myqcloud.com/wp-content/uploads/2018/07/1532643810.jpg?imageMogr2/interlace/1/crop/1920x1080) center bottom;
+    border-radius: 5px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover {
+    position: absolute;
+    width: 580px;
+    height: 540px;
+    z-index:1;
+    /* background-color:rgba(222, 46, 69,.8); */
+    background-color:rgba(28, 0, 46, 0.8);
+  }
+
+  .title {
+    position: absolute;
+    z-index: 2;
+    color: #FFF;
+    width: 40%;
+    text-align: left;
+    height: 160px;
+    padding: 15% 10%;
+    background: #FFF;
+  }
+  
+  .title h1,.title h3{
+    padding:0;
+    margin:0;
+  }
+
+  .title h1 {
+    font-size: 28px;
+  }
+
+  .title h3 {
+    font-size: 15px;
+    color:#8e8e8e;
+  }
+
+  .form{
+    position: absolute;
+    z-index:2;
+    top:30%;
+    left:0;
+    width:40%;
+    background: #FFF;
+    height:390px;
+    padding: 15% 10%;
+  }
+  </style>
 </head>
 
 <body>
   <div id="root">
-    {{message}}
     <div class="content">
+      <div class="cover"></div>
       <div class="title">
-        {{systemName}}
+        <h1>
+            {{systemName}}
+        </h1>
+        <h3>
+          {{systemSubTitle}}
+        </h3>
+      </div>
+      <div class="form">
+        <input v-model="username"/>
+        <input v-model="password"/>
       </div>
     </div>
   </div>
@@ -30,8 +96,10 @@
     var app = new Vue({
       el: '#root',
       data: {
-        message: 'Hello Vue!',
-        systemName: window.data.system_name
+        systemName: window.data.system_name,
+        systemSubTitle: window.data.system_subtitle,
+        username: '',
+        password: ''
       }
     })
   }
