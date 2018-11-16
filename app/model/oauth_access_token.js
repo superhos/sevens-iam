@@ -10,7 +10,7 @@ module.exports = app => {
 
   const OauthAccessTokenSchema = new Schema({
     userType: { type: String },
-    userId: { type: String },
+    userId: { type: String, ref: 'member' },
     clientId: { type: String },
     revoked: { type: Boolean, default: false },
     accessToken: String,

@@ -9,7 +9,7 @@ module.exports = app => {
   const Schema = mongoose.Schema;
 
   const MemberSchema = new Schema({
-    applicationId: { type: String },
+    applicationId: { type: String, ref: 'application'},
     title: { type: String },
     username: { type: String },
     password: { type: String },

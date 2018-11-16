@@ -1,33 +1,52 @@
 'use strict';
-const AuthServer = require('oauth2-server');
+const InvalidRequestError = require('oauth2-server/').InvalidRequestError
+const InvalidClientError = require('oauth2-server/').InvalidClientError
+const _ = require('lodash')
 
 module.exports = app => {
   class AuthorizeController extends app.Controller {
 
     async index() {
+      this.vaildParamsForAuthorize(this.ctx.query)
 
-      // console.log(AuthServer)
-      // if (!this.vaildParamsForAuthorize(this.ctx.query)){
-      //   this.ctx.body = {"error":"unsupported_grant_type","message":"The authorization grant type is not supported by the authorization server.","hint":"Check that all required parameters have been provided"}
-      //   return
-      // }
+      const client = await this.ctx.service.client.findOne({clientId : this.ctx.query.client_id})
 
-      // const client = await this.ctx.service.client.findOne({clientId : this.ctx.query.client_id})
+      if (!client) {
+        throw new InvalidClientError('Invalid client: client is invalid')
+      }
 
-      // if (!(client.redirectUris.find(e => e === this.ctx.query.redirect_uri))){
-      //   this.ctx.body = {"error":"invalid_client","message":"Client authentication failed"}
-      //   return
-      // }
+      const redirectUri = this.ctx.query.redirect_uri;
+      if (redirectUri && !_.includes(client.redirectUris, redirectUri)) {
+        throw new InvalidClientError('Invalid client: `redirect_uri` does not match client value')
+      }
+
+      // Check user session
+      if (!(this.ctx.session && this.ctx.session.user && this.ctx.session.user._id)) {
+        // Redirect to login
+        this.ctx.redirect(`/member/login?redirect_url=${encodeURIComponent(this.ctx.request.originalUrl)}`)
+        return
+      }
+
+      // Get action
+      const actions = client.actions
+      let actionsData = []
+      if (actions && actions.length > 0) {
+        // const query = t
+        let or = actions.map(e => {return { "code" : e }})
+        // query.or(or)
+        actionsData = await this.ctx.model.Action.find({ $or: or})
+      }
 
       await this.ctx.render('authorize.ejs', {
         data: {
-          'system_name': app.config.systemInfo.name || app.config.name,
-          'system_subtitle': app.config.systemInfo.subtitle || ''
+          'system_info': app.config.systemInfo,
+          'prms_list'  : actionsData
         }
       })
     }
 
     async create() {
+      // 登录
       this.ctx.redirect('/oauth/authorize')
       // await this.ctx.render('authorize.ejs', {
       //   data: {
@@ -70,14 +89,18 @@ module.exports = app => {
         state: {
           nullable: true
         },
+        token: {
+          nullable: false
+        }
       }
+
       for (const key in normal) {
         if (!data[key] && !normal[key].nullable){
-          return false
+          throw new InvalidRequestError(`Missing parameter: \`${key}\``)
         }
 
         if (data[key] && !normal[key].nullable && data[key].length === 0){
-          return false
+          throw new InvalidRequestError('Invalid parameter: `client_id`')
         }
       }
 

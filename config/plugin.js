@@ -17,6 +17,13 @@ exports.ejs = {
   package: 'egg-view-ejs',
 };
 
+exports.session = true;
+
+exports.i18n = {
+  enable: true,
+  package: 'egg-i18n',
+};
+
 // exports.mongo = {
 //   enable: true,
 //   package: 'egg-mongo-native',

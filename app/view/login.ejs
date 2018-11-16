@@ -82,48 +82,6 @@
     padding: 0 8%;
   }
 
-  .introduction span.reminder {
-    /* border-bottom: 1px solid #c4c4c4; */
-    /* border-left: 4px solid #c4c4c4; */
-    padding-left: 5px;
-    font-weight: 500;
-    padding-bottom: 3px;
-  }
-
-  .introduction ul {
-    /* padding: 0; */
-    border: 1px solid #ccc;
-    padding: 10px;
-    border-radius: 5px;
-    box-sizing: border-box;
-    background: #fdfdfd;
-    box-shadow: 1px 1px 1px 2px #f8f8f8;
-  }
-
-  .introduction ul li{
-    list-style: none;
-  }
-
-  .introduction ul li:after{
-    content: "";
-    clear: both;
-    display: table;
-  }
-
-  .introduction ul li span{
-    font-weight: 300;
-    float: left;
-    font-size: 13px;
-    line-height: 20px;
-    width: 90%;
-  }
-
-  .introduction ul li i {
-    float: right;
-    color: #c4c4c4;
-    line-height: 21px;
-  }
-
   .form{
     background: #FFF;
     padding: 5px 8%;
@@ -203,29 +161,35 @@
           </el-row>
         </div>
         <div>
-        <div>
+        <div v-if="isLogin">
             <div class="introduction">
               <p>
-                <%- __('AuthReminder') %>
+                您正在使用 <strong>{{systemInfo.name}}</strong> 提供之登录授权系统。
               </p>
-              <span class="reminder"><%- __('AskReminder') %></span>
-              <ul>
-                <li v-for="item in prmsList" :key="item._id">
-                  <span>{{item.label[lang]}}</span>
-                <el-tooltip :content="item.description[lang]" placement="top" effect="light">
-                    <i class="el-icon-question"></i>
-                  </el-tooltip>
-                </li>
-              </ul>
+              <span>系统请求访问以下权限</span>
             </div>
           </div>
+          <div class="introduction">
+            <p>
+              <%- __('LoginReminder') %>
+            </p>
+          </div>
           <div class="form">
-            <el-form method="post" status-icon :rules="rules" ref="authForm" label-width="0" class="demo-ruleForm">
+            <el-form :model="loginForm" method="post" status-icon :rules="rules" ref="loginForm" label-width="0" class="demo-ruleForm">
+              <el-form-item prop="username">
+                <el-input name="username" v-model="loginForm.username" placeholder="用户名"></el-input>
+              </el-form-item>
+              <el-form-item prop="password">
+                <el-input name="password" type="password" v-model="loginForm.password" placeholder="密码" autocomplete="off"></el-input>
+              </el-form-item>
                 <el-form-item>
-                  <el-button size="small" @click="reject('authForm')"><%- __('Reject') %></el-button>
-                  <el-button size="small" type="primary" @click="submit('authForm')"><%- __('Auth') %></el-button>
+                  <el-button size="small" @click="resetForm('loginForm')"><%- __('Reset') %></el-button>
+                  <el-button size="small" type="primary" @click="submitForm('loginForm')"><%- __('Login') %></el-button>
                 </el-form-item>
               </el-form>
+              <div class="registerBtn">
+                  <a size="small" @click="resetForm('loginForm')"><%- __('RegisterReminder') %></a>
+              </div>
           </div>
         </div>
         <footer>
@@ -244,10 +208,12 @@
       el: '#root',
       data() {
         return {
-          lang: "<%- __('Lang') %>",
           systemInfo: window.data.system_info,
           isLogin: window.data.isLogin,
-          prmsList: window.data.prms_list,
+          loginForm: {
+            username: '',
+            password: ''
+          },
           rules: {
             username: [
               { required: true, message: '请输入用户名', trigger: 'blur' },
@@ -255,8 +221,7 @@
             password: [
               { required: true, message: '请输入密码', trigger: 'blur' },
             ]
-          },
-          authForm: {}
+          }
         }
       },
       mounted (){
@@ -266,25 +231,19 @@
         if (err && err.length > 0){
           this.$message.error(err)
         }
-        
-        url.searchParams.forEach((e, i) => {
-          this.authForm[i] = e
-        })
       },
       methods: {
-        submit(formName) {
-          // const url = '/oauth2/token'
-          // fetch(url, {
-          //     method: 'POST',
-          //     headers: {
-          //       'Content-Type': 'application/x-www-form-urlencoded',
-          //       'Authorization': `Basic ${authForm.token}`
-          //     },
-          //     body: new FormData(postData)
-          // })
+        submitForm(formName) {
+          const form = this.$refs[formName].$el.submit()
+          this.$refs[formName].validate((valid) => {
+            if (!valid) {
+              return false
+            }
+            form.submit()
+          });
         },
-        reject(formName) {
-          history.back();
+        resetForm(formName) {
+          this.$refs[formName].resetFields()
         }
       }
     })

@@ -15,7 +15,8 @@ module.exports = app => {
     secret: { type: String },
     redirectUris: { type: Array },
     grants: { type: Array },
-    applicationId: { type: String },
+    actions: { type: Array },
+    applicationId: { type: String, ref: 'application' },
     refreshTokenLifetime: { type: Number },
     accessTokenLifetime: { type: Number },
   });
