@@ -21,47 +21,33 @@ module.exports = app => {
       }
 
       // Check user session
-      if (!(this.ctx.session && this.ctx.session.user && this.ctx.session.user._id)) {
+      if ((!(this.ctx.session && this.ctx.session.user && this.ctx.session.user._id)) || this.ctx.query.forcelogin) {
         // Redirect to login
-        this.ctx.redirect(`/member/login?redirect_url=${encodeURIComponent(this.ctx.request.originalUrl)}`)
+        const url = `${this.ctx.request.host}/member/login?redirect_url=${encodeURIComponent(this.ctx.request.originalUrl)}`
+        const result = await this.ctx.curl(url)
+        this.ctx.set(result.header);
+        // result.res is stream
+        this.ctx.body = result.data.toString();
         return
       }
 
       // Get action
-      const actions = client.actions
-      let actionsData = []
-      if (actions && actions.length > 0) {
-        // const query = t
-        let or = actions.map(e => {return { "code" : e }})
+      const allow_scopes = client.allow_scopes
+      let scope = this.ctx.query.scope.split(',')
+      let scopesData = []
+      if (scope && scope.length > 0 && allow_scopes && allow_scopes.length > 0) {
+        let applyScope = scope.find(e => e === 'all') ? allow_scopes : scope.filter(e => allow_scopes.find(ele => ele === e))
+        let or = applyScope.map(e => {return { "code" : e }})
         // query.or(or)
-        actionsData = await this.ctx.model.Action.find({ $or: or})
+        scopesData = await this.ctx.model.Scope.find({ $or: or})
       }
 
       await this.ctx.render('authorize.ejs', {
         data: {
           'system_info': app.config.systemInfo,
-          'prms_list'  : actionsData
+          'prms_list'  : scopesData
         }
       })
-    }
-
-    async create() {
-      // 登录
-      this.ctx.redirect('/oauth/authorize')
-      // await this.ctx.render('authorize.ejs', {
-      //   data: {
-      //     'a': 'b'
-      //   }
-      // })
-    }
-
-    async update() {
-      this.ctx.redirect('/oauth/authorize')
-      // await this.ctx.render('authorize.ejs', {
-      //   data: {
-      //     'a': 'b'
-      //   }
-      // })
     }
 
     async destroy() {
@@ -89,9 +75,15 @@ module.exports = app => {
         state: {
           nullable: true
         },
-        token: {
+        client_secret: {
           nullable: false
+        },
+        forcelogin: {
+          nullable: true
         }
+        // token: {
+        //   nullable: false
+        // }
       }
 
       for (const key in normal) {
@@ -100,7 +92,7 @@ module.exports = app => {
         }
 
         if (data[key] && !normal[key].nullable && data[key].length === 0){
-          throw new InvalidRequestError('Invalid parameter: `client_id`')
+          throw new InvalidRequestError('Invalid parameter: no content of \`${key}\`')
         }
       }
 

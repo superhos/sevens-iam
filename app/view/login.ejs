@@ -175,7 +175,8 @@
             </p>
           </div>
           <div class="form">
-            <el-form :model="loginForm" method="post" status-icon :rules="rules" ref="loginForm" label-width="0" class="demo-ruleForm">
+            <el-form :model="loginForm" action="/member/login" method="post" status-icon :rules="rules" ref="loginForm" label-width="0" class="demo-ruleForm">
+              <input type="hidden" name="redirect_url" :value="redirect_url" />
               <el-form-item prop="username">
                 <el-input name="username" v-model="loginForm.username" placeholder="用户名"></el-input>
               </el-form-item>
@@ -210,6 +211,8 @@
         return {
           systemInfo: window.data.system_info,
           isLogin: window.data.isLogin,
+          err: window.data.err,
+          redirect_url: window.data.redirect_url,
           loginForm: {
             username: '',
             password: ''
@@ -227,7 +230,7 @@
       mounted (){
         document.getElementById('root').style = "display:block"
         var url = new URL(window.location.href);
-        var err = url.searchParams.get("error");
+        var err = this.err;
         if (err && err.length > 0){
           this.$message.error(err)
         }
