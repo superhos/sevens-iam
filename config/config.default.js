@@ -19,7 +19,8 @@ module.exports = appInfo => {
   // DB Setting
   config.mongoose = {
     client: {
-      url: 'mongodb://sevens:112358@127.0.0.1:27017/sevens-iam',
+      // url: 'mongodb://sevens:112358@127.0.0.1:27017/sevens-iam',
+      url: 'mongodb://sevens:112358@47.90.14.129:27017/sevens-iam',
       options: {
       },
     },

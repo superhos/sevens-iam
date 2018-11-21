@@ -6,7 +6,7 @@
 module.exports = app => {
   const { router, controller } = app
   // router.get('/', controller.home.index);
-  app.get('/', controller.home.index)
+  app.get('/', controller.system.version)
   // 用户
   app.get('/member/login', controller.member.login)
   app.post('/member/login', controller.member.loginOp)

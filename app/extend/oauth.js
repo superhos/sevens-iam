@@ -10,12 +10,12 @@ module.exports = app => {
 
     async getClient(clientId, clientSecret) {
       const client = await this.ctx.service.client.findOne({ clientId })
-      if (clientId !== client.clientId || clientSecret !== client.clientSecret) {
+      if (clientId !== client.clientId) {
         return
       }
       return client
     }
-
+    
     async getUser(username, password) {
       const user = await this.ctx.service.member.findOne({ username })
       if (!user || username !== user.username || md5(password) !== user.password) {
@@ -25,20 +25,41 @@ module.exports = app => {
       return user
     }
 
-    // async saveAuthorizationCode(code, client, user) {
-    //   app.logger.debug('#saveAuthorizationCode')
-    //   console.log(code, client, user)
-    //   let authCode = {
-    //     authorization_code: code.authorizationCode,
-    //     expires_at: code.expiresAt,
-    //     redirect_uri: code.redirectUri,
-    //     scope: code.scope,
-    //     client_id: client.id,
-    //     user_id: user.id
-    //   };
-    //   console.log(authCode)
-    //   return authCode
-    // }
+    async getUserFromClient(client) {
+      // imaginary DB query
+      return await this.ctx.service.member.findOne({ client_id: client })
+    }
+
+    async saveAuthorizationCode(code, client, user) {
+      // app.logger.debug('#saveAuthorizationCode')
+       // imaginary DB queries
+       let authCode = {
+        authorization_code: code.authorizationCode,
+        expires_at: code.expiresAt,
+        redirect_uri: code.redirectUri,
+        scope: code.scope,
+        client_id: client.id,
+        user_id: user.id,
+      };
+      let result = await this.ctx.model.OauthCode.create(authCode)
+      // result.aga = code.authorizationCode
+      result = result.toJSON()
+      return result;
+    }
+
+    async getAuthorizationCode(authorizationCode) {
+      // imaginary DB queries
+      const code = await this.ctx.model.OauthCode.findOne({authorization_code: authorizationCode})
+      
+      return {
+        code: code.authorization_code,
+        expiresAt: code.expires_at,
+        redirectUri: code.redirect_uri,
+        scope: code.scope,
+        // client: client, // with 'id' property
+        // user: user
+      };
+    }
 
     async getAccessToken(bearerToken) {
       app.logger.debug('#get_token')
