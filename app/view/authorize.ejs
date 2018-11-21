@@ -194,10 +194,10 @@
             </el-col>
             <el-col :span="20">
               <h1>
-                  {{systemInfo.name}}
+                  {{passData.system_info.name}}
               </h1>
               <h3>
-                {{systemInfo.subtitle}}
+                {{passData.system_info.subtitle}}
               </h3>
             </el-col>
           </el-row>
@@ -210,7 +210,7 @@
               </p>
               <span class="reminder"><%- __('AskReminder') %></span>
               <ul>
-                <li v-for="item in prmsList" :key="item._id">
+                <li v-for="item in passData.prms_list" :key="item._id">
                   <span>{{item.label[lang]}}</span>
                 <el-tooltip :content="item.description[lang]" placement="top" effect="light">
                     <i class="el-icon-question"></i>
@@ -220,16 +220,18 @@
             </div>
           </div>
           <div class="form">
-            <el-form method="post" status-icon :rules="rules" ref="authForm" label-width="0" class="demo-ruleForm">
+            <el-form method="post" action="/oauth2/authorize" status-icon :rules="rules" ref="authForm" label-width="0" class="demo-ruleForm">
                 <el-form-item>
+                  <input v-for="item in Object.keys(passData.url_data)" type="hidden" :key="item" :name="item" :value="passData.url_data[item]" />
+                  <!-- <input type="hidden" name="grant_type" :value="passData.url_data[item]" /> -->
                   <el-button size="small" @click="reject('authForm')"><%- __('Reject') %></el-button>
-                  <el-button size="small" type="primary" @click="submit('authForm')"><%- __('Auth') %></el-button>
+                  <el-button size="small" type="primary" @click="submitForm('authForm')"><%- __('Auth') %></el-button>
                 </el-form-item>
               </el-form>
           </div>
         </div>
         <footer>
-          {{systemInfo.copyright}}
+          {{passData.system_info.copyright}}
         </footer>
       </div>
     </div>
@@ -245,9 +247,7 @@
       data() {
         return {
           lang: "<%- __('Lang') %>",
-          systemInfo: window.data.system_info,
-          isLogin: window.data.isLogin,
-          prmsList: window.data.prms_list,
+          passData:  window.data,
           rules: {
             username: [
               { required: true, message: '请输入用户名', trigger: 'blur' },
@@ -272,16 +272,14 @@
         })
       },
       methods: {
-        submit(formName) {
-          const url = '/oauth2/token'
-          fetch(url, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Authorization': `Basic ${authForm.token}`
-              },
-              body: new FormData(postData)
-          })
+        submitForm(formName) {
+          const form = this.$refs[formName].$el.submit()
+          this.$refs[formName].validate((valid) => {
+            if (!valid) {
+              return false
+            }
+            form.submit()
+          });
         },
         reject(formName) {
           history.back();

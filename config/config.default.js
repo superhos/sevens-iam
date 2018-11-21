@@ -3,7 +3,7 @@
 module.exports = appInfo => {
   const config = exports = {};
 
-  config.systemInfo = {}
+  config.systemInfo = {};
   // use for cookie sign key, should change to your own and keep security
   config.keys = appInfo.name + '_1542168498168_6998';
 
@@ -30,7 +30,7 @@ module.exports = appInfo => {
     csrf: {
       enable: false,
     },
-    domainWhiteList:['.sevens.com'],  // 安全白名单，以 . 开头
+    domainWhiteList: [ '.sevens.com' ], // 安全白名单，以 . 开头
   };
 
   // View Setting
@@ -45,9 +45,9 @@ module.exports = appInfo => {
     all(err, ctx) {
       // all exception return JSON
       ctx.body = JSON.stringify(err);
-      ctx.status = err.status || err.code
-    }
-  }
+      ctx.status = err.status || err.code;
+    },
+  };
 
   // Language
   config.i18n = {
@@ -56,7 +56,7 @@ module.exports = appInfo => {
     cookieField: 'locale',
     // Cookie 默认一年后过期， 如果设置为 Number，则单位为 ms
     cookieMaxAge: 5000,
-  }
+  };
 
   return config;
 };

@@ -152,23 +152,15 @@
             </el-col>
             <el-col :span="20">
               <h1>
-                  {{systemInfo.name}}
+                  {{passData.system_info.name}}
               </h1>
               <h3>
-                {{systemInfo.subtitle}}
+                {{passData.system_info.subtitle}}
               </h3>
             </el-col>
           </el-row>
         </div>
         <div>
-        <div v-if="isLogin">
-            <div class="introduction">
-              <p>
-                您正在使用 <strong>{{systemInfo.name}}</strong> 提供之登录授权系统。
-              </p>
-              <span>系统请求访问以下权限</span>
-            </div>
-          </div>
           <div class="introduction">
             <p>
               <%- __('LoginReminder') %>
@@ -194,7 +186,7 @@
           </div>
         </div>
         <footer>
-          {{systemInfo.copyright}}
+          {{passData.system_info.copyright}}
         </footer>
       </div>
     </div>
@@ -209,9 +201,7 @@
       el: '#root',
       data() {
         return {
-          systemInfo: window.data.system_info,
-          isLogin: window.data.isLogin,
-          err: window.data.err,
+          passData:  window.data,
           redirect_url: window.data.redirect_url,
           loginForm: {
             username: '',
@@ -230,7 +220,7 @@
       mounted (){
         document.getElementById('root').style = "display:block"
         var url = new URL(window.location.href);
-        var err = this.err;
+        var err = this.passData.err;
         if (err && err.length > 0){
           this.$message.error(err)
         }

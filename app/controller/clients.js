@@ -15,7 +15,7 @@ module.exports = app => {
     }
 
     async create() {
-      const res = await this.ctx.service.client.insert({
+      const res = await this.ctx.model.OAuthClient.insert({
         ...this.ctx.request.body,
       });
 

@@ -4,9 +4,9 @@
  * Module dependencies.
  */
 
-var _ = require('lodash');
-var OAuthError = require('oauth2-server/').OAuthError;
-var util = require('util');
+const _ = require('lodash');
+const OAuthError = require('oauth2-server/').OAuthError;
+const util = require('util');
 
 /**
  * Constructor.
@@ -19,10 +19,10 @@ var util = require('util');
 function InvalidLoginError(message, properties) {
   properties = _.assign({
     code: 422,
-    name: 'invalid_login'
+    name: 'invalid_login',
   }, properties);
 
-  console.log(properties)
+  console.log(properties);
 
   OAuthError.call(this, message, properties);
 }

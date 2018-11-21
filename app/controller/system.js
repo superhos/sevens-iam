@@ -5,15 +5,16 @@ const { version } = require('../../package.json');
 
 class SystemController extends Controller {
   async index() {
-    this.ctx.body = 'hi, egg';
-  }
+    const code = this.ctx.request.queries.code;
 
-  async check() {
-    this.ctx.body = 'auth check';
+    // apply access_token
+    // await this.ctx.curl()
+    // console.log(this.ctx.model.User)
+    this.ctx.body = `hi, ${code}`;
   }
 
   async version() {
-    this.ctx.body = { version }
+    this.ctx.body = { version };
   }
 }
 
