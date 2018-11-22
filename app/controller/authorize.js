@@ -23,6 +23,7 @@ module.exports = app => {
       }
 
       // Check user session
+      console.log(this.ctx.session.user)
       if ((!(this.ctx.session && this.ctx.session.user && this.ctx.session.user._id)) || this.ctx.query.forcelogin) {
         // Redirect to login
         const url = `${this.ctx.request.host}/member/login?redirect_url=${encodeURIComponent(this.ctx.request.originalUrl)}`;
@@ -34,7 +35,7 @@ module.exports = app => {
 
       // Get Scope
       const allow_scopes = client.allow_scopes;
-      const scope = this.ctx.query.scope.split(',');
+      const scope = this.ctx.query.scope ? this.ctx.query.scope.split(',') : [];
       let scopesData = [];
       if (scope && scope.length > 0 && allow_scopes && allow_scopes.length > 0) {
         const applyScope = scope.find(e => e === 'all') ? allow_scopes : scope.filter(e => allow_scopes.find(ele => ele === e));
@@ -76,9 +77,9 @@ module.exports = app => {
         state: {
           nullable: true,
         },
-        client_secret: {
-          nullable: false,
-        },
+        // client_secret: {
+        //   nullable: false,
+        // },
         forcelogin: {
           nullable: true,
         },

@@ -10,21 +10,11 @@ module.exports = app => {
   const mongoose = app.mongoose;
   const Schema = mongoose.Schema;
 
-  // const OauthAccessTokenSchema = new Schema({
-  //   userType: { type: String },
-  //   userId: { type: String, ref: 'member' },
-  //   clientId: { type: String },
-  //   revoked: { type: Boolean, default: false },
-  //   accessToken: String,
-  //   scope: String,
-  //   accessTokenExpiresAt: { type: Date },
-  //   refreshToken: String,
-  //   refreshTokenExpiresAt: { type: Date },
-  // }, { collection: 'oauth_access_tokens' });
-
   const OAuthAccessTokenSchema = new Schema({
     accessToken: String,
     accessTokenExpiresAt: Date,
+    refreshToken: String,
+    refreshTokenExpiresAt: Date,
     scope: String,
     user: { type: Schema.Types.ObjectId, ref: 'User' },
     client: { type: Schema.Types.ObjectId, ref: 'OAuthClient' },

@@ -5,13 +5,12 @@
  */
 module.exports = app => {
   const { router, controller } = app;
-  // UAT
-  app.get('/test', controller.system.index);
-
   app.get('/', controller.system.version);
   // 用户
   app.get('/member/login', controller.member.login);
   app.post('/member/login', controller.member.loginOp);
+  app.get('/member/register', controller.member.login);
+  app.post('/member/register', controller.member.loginOp);
 
   // authorization_code mode
   // 授权

@@ -1,7 +1,8 @@
 'use strict';
 const InvalidLoginError = require('../error/invalid-login-error');
+const InvalidGrantError = require('oauth2-server').InvalidGrantError;
 
-module.exports = app => {
+module.exports = () => {
 
   class oauth {
     constructor(ctx) {
@@ -24,13 +25,15 @@ module.exports = app => {
 
     async getUser() {
       if (!this.ctx.session || !this.ctx.session.user) {
-        throw new InvalidLoginError(`${this.ctx.__('NOCOOKIE')}`);
+        this.ctx.session = null
+        throw new InvalidLoginError(`${this.ctx.__('NOCOOKIE')}`)
       }
-
+      
       const { username, password } = this.ctx.session.user;
       const user = await this.ctx.model.User.findOne({ username: this.ctx.session.user.username });
       if (!user || username !== user.username || password !== user.password) {
-        throw new InvalidLoginError(`${this.ctx.__('LoginFail')}`);
+        this.ctx.session = null
+        throw new InvalidLoginError(`${this.ctx.__('LoginFail')}`)
       }
       delete user.password;
       return user;
@@ -57,8 +60,11 @@ module.exports = app => {
 
     async getAuthorizationCode(authorizationCode) {
       const code = await this.ctx.model.OAuthAuthorizationCode.findOne({ code: authorizationCode });
-      const client = await this.ctx.model.OAuthClient.findOne({ _id: code.client._id });
-      const user = await this.ctx.model.User.findOne({ _id: code.user._id });
+      if (!code) {
+        throw new InvalidGrantError('Invalid grant: authorization code has used');
+      }
+      const client = await this.ctx.model.OAuthClient.findOne({ _id: code.client });
+      const user = await this.ctx.model.User.findOne({ _id: code.user });
 
       return {
         code: code.code,
@@ -76,21 +82,39 @@ module.exports = app => {
     }
 
     async getAccessToken(bearerToken) {
-      app.logger.debug('#get_token');
       const token = await this.ctx.model.OAuthAccessToken.findOne({ accessToken: bearerToken });
       if (!token) {
         return;
       }
-      const { userId, clientId } = token;
-      const user = await this.ctx.model.User.findOne({ _id: userId });
-      const client = await this.ctx.model.OAuthClient.findOne({ clientId });
-      token.user = user;
-      token.client = client;
+
+      const { user, client } = token;
+      const userData = await this.ctx.model.User.findOne({ _id: user });
+      const clientData = await this.ctx.model.OAuthClient.findOne({ _id: client });
+      token.user = userData;
+      token.client = clientData;
       return token;
     }
 
+    // async getRefreshToken(refreshToken) {
+    //   // imaginary DB queries
+    //   const token = await this.ctx.model.OAuthAccessToken.findOne({ refreshToken })
+    //   if (!token) {
+    //     throw new InvalidGrantError('Invalid grant: refresh token invaid')
+    //   }
+    //   token.client = await this.ctx.model.OAuthClient.findOne({ _id: token.client })
+    //   token.user = await this.ctx.model.User.findOne({ _id: token.user })
+   
+    //   return {
+    //     refreshToken: token.refreshToken,
+    //     refreshTokenExpiresAt: token.refreshTokenExpiresAt,
+    //     scope: token.scope,
+    //     client: token.client, // with 'id' property
+    //     user: token.user
+    //   }
+    // }
+
     async saveToken(token, client, user) {
-      const _token = Object.assign({}, token, { userId: user.userId || user._id }, { clientId: client.clientId });
+      const _token = Object.assign({}, token, { user: user._id }, { client: client._id });
 
       await this.ctx.model.OAuthAccessToken.create(_token);
       _token.client = client;
