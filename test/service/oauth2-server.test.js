@@ -75,9 +75,9 @@ describe('service/oauth2-server.test.js', () => {
   //     });
   // });
 
-  it('incorrect data POST /member/login', () => {
+  it('incorrect data POST /user/login', () => {
     return app.httpRequest()
-      .post('/member/login')
+      .post('/user/login')
       .send({
         redirect_url: '/oauth2/authorize?client_id=sevens-web&redirect_uri=http://iam.sevens.com/test&scope=all&response_type=code&state=&locale=zh-CN',
         username: 'sevens',
@@ -86,10 +86,10 @@ describe('service/oauth2-server.test.js', () => {
       .expect(500);
   });
 
-  it('correct data POST /member/login', () => {
+  it('correct data POST /user/login', () => {
     const redirect_url = '/oauth2/authorize?client_id=sevens-web&redirect_uri=http://iam.sevens.com/test&scope=all&response_type=code&state=&locale=zh-CN';
     return app.httpRequest()
-      .post('/member/login')
+      .post('/user/login')
       .send({
         redirect_url,
         username: 'sevens',

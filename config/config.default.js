@@ -20,10 +20,16 @@ module.exports = appInfo => {
   config.mongoose = {
     client: {
       url: 'mongodb://sevens:112358@127.0.0.1:27017/sevens-iam',
+      // url: 'mongodb://sevens-iam-db:27017/sevens-iam',
       options: {
       },
     },
   };
+
+  // Session
+  config.session = {
+    renew: true,
+  }
 
   // Security Setting
   config.security = {

@@ -7,10 +7,10 @@ module.exports = app => {
   const { router, controller } = app;
   app.get('/', controller.system.version);
   // 用户
-  app.get('/member/login', controller.member.login);
-  app.post('/member/login', controller.member.loginOp);
-  app.get('/member/register', controller.member.login);
-  app.post('/member/register', controller.member.loginOp);
+  app.get('/user/login', controller.user.login);
+  app.post('/user/login', controller.user.loginOp);
+  app.get('/user/register', controller.user.login);
+  app.post('/user/register', controller.user.loginOp);
 
   // authorization_code mode
   // 授权

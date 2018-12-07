@@ -1,10 +1,11 @@
 'use strict';
 /**
- * Member model
+ * OAuthAuthorizationCode model
  * @param {app} app the framework app
  * @return {Modal} the modal of mongoose
  */
 const { toSnakeCase } = require('../utils/utils');
+const moment = require('moment')
 
 module.exports = app => {
   const mongoose = app.mongoose;
@@ -12,7 +13,7 @@ module.exports = app => {
 
   const OAuthAuthorizationCodeSchema = new Schema({
     code: String,
-    expiresAt: Date,
+    expiresAt: { type: Date, default: moment().add(15,'minutes').toDate()},
     redirectUri: String,
     scope: String,
     user: { type: Schema.Types.ObjectId, ref: 'User' },

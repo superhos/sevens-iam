@@ -1,6 +1,6 @@
 'use strict';
 /**
- * Member model
+ * OAuthAccessToken model
  * @param {app} app the framework app
  * @return {Modal} the modal of mongoose
  */

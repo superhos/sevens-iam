@@ -1,0 +1,10 @@
+{
+  "apps" : [
+    {
+      "name"  : "sevens-iam",
+      "script": "npm",
+      "args"  : ["start"],
+      "watch" : true
+    }
+  ]
+}

@@ -3,7 +3,7 @@
 const md5 = require('md5');
 
 module.exports = app => {
-  class MemberController extends app.Controller {
+  class UserController extends app.Controller {
 
     async login() {
       await this.ctx.render('login.ejs', {
@@ -19,7 +19,7 @@ module.exports = app => {
       const { username, password } = this.ctx.request.body;
       const user = await this.ctx.model.User.findOne({ username });
       if (!user || username !== user.username || md5(password) !== user.password) {
-        const url = `${this.ctx.request.host}/member/login?redirect_url=${encodeURIComponent(this.ctx.request.body.redirect_url)}&error=${this.ctx.__('LoginFail')}`;
+        const url = `${this.ctx.request.host}/user/login?redirect_url=${encodeURIComponent(this.ctx.request.body.redirect_url)}&error=${this.ctx.__('LoginFail')}`;
         const result = await this.ctx.curl(url);
         this.ctx.set(result.header);
         this.ctx.body = result.data.toString();
@@ -32,5 +32,5 @@ module.exports = app => {
     }
 
   }
-  return MemberController;
+  return UserController;
 };

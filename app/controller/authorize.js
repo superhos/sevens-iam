@@ -23,10 +23,9 @@ module.exports = app => {
       }
 
       // Check user session
-      console.log(this.ctx.session.user)
       if ((!(this.ctx.session && this.ctx.session.user && this.ctx.session.user._id)) || this.ctx.query.forcelogin) {
         // Redirect to login
-        const url = `${this.ctx.request.host}/member/login?redirect_url=${encodeURIComponent(this.ctx.request.originalUrl)}`;
+        const url = `${this.ctx.request.host}/user/login?redirect_url=${encodeURIComponent(this.ctx.request.originalUrl)}`;
         const result = await this.ctx.curl(url);
         this.ctx.set(result.header);
         this.ctx.body = result.data.toString();

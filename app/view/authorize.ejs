@@ -222,6 +222,7 @@
           <div class="form">
             <el-form method="post" action="/oauth2/authorize" status-icon :rules="rules" ref="authForm" label-width="0" class="demo-ruleForm">
                 <el-form-item>
+                  <input type="hidden" name="scope" :value="passData.prms_list.map(e => e.scope).join(',')" />
                   <input v-for="item in Object.keys(passData.url_data)" type="hidden" :key="item" :name="item" :value="passData.url_data[item]" />
                   <!-- <input type="hidden" name="grant_type" :value="passData.url_data[item]" /> -->
                   <el-button size="small" @click="reject('authForm')"><%- __('Reject') %></el-button>

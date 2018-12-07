@@ -1,0 +1,41 @@
+version: '3.5'
+
+services:
+  sevens-iam-db:
+    image: mongo
+    container_name: sevens-iam-db
+    restart: always
+    volumes:
+      - $PWD/../migrations/db:/data/db
+      - $PWD/../migrations/backup:/data/backup
+
+  adminmongo:
+    image: mrvautin/adminmongo
+    restart: always
+    container_name: sevens-iam-db-ui
+    environment:
+      - CONN_NAME=sevens-iam
+      - DB_HOST=sevens-iam-db
+      - DB_PORT=27017
+    ports:
+      - "9876:1234"
+    depends_on:
+      - sevens-iam-db
+
+  sevens-iam-web:
+    image: sevens-iam-web
+    container_name: sevens-iam-web
+    build: ../ # read Dockerfile
+    environment:
+      - NODE_ENV=production
+      - dbURL=mongodb://sevens-iam-db:27017/sevens-iam
+    ports:
+      - '0.0.0.0:8087:7001'
+      - '0.0.0.0:8088:7002'
+    volumes:
+      - $PWD/../data:/app/data
+      - $PWD/../logs:/app/logs
+      - $PWD/../:/var/www/app
+    depends_on:
+      - sevens-iam-db
+

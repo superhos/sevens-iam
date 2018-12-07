@@ -1,6 +1,7 @@
 'use strict';
 const InvalidLoginError = require('../error/invalid-login-error');
 const InvalidGrantError = require('oauth2-server').InvalidGrantError;
+const moment = require('moment')
 
 module.exports = () => {
 
@@ -48,6 +49,8 @@ module.exports = () => {
       };
       const result = await this.ctx.model.OAuthAuthorizationCode.create(authCode);
       const authorizationCode = result.toJSON();
+
+
       return {
         authorizationCode: authorizationCode.code,
         expiresAt: authorizationCode.expiresAt,
@@ -65,7 +68,7 @@ module.exports = () => {
       }
       const client = await this.ctx.model.OAuthClient.findOne({ _id: code.client });
       const user = await this.ctx.model.User.findOne({ _id: code.user });
-
+      
       return {
         code: code.code,
         expiresAt: code.expiresAt,
