@@ -1,6 +1,12 @@
-# sevens-iam
+# Sevens-IAM
 
-IAM service for sevens services.
+IAM service for sevens services. Simple way to deploy your own OAuth2 service.
+
+## Feature
+
+<p align="center"><img width=45% src="https://github.com/superhos/sevens-iam/blob/master/docs/1.jpeg"></p>
+
+<p align="center"><img width=45% src="https://github.com/superhos/sevens-iam/blob/master/docs/2.jpeg"></p>
 
 ## QuickStart
 

@@ -16,7 +16,7 @@ module.exports = () => {
         params.clientSecret = clientSecret;
       }
 
-      await this.ctx.model.OAuthClient.create(params);
+      // await this.ctx.model.OAuthClient.create(params);
       const client = await this.ctx.model.OAuthClient.findOne(params);
       if (clientId !== client.clientId) {
         return;
